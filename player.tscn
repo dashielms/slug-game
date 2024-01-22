@@ -1,17 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://bg2efm3e4komr"]
+[gd_scene load_steps=9 format=3 uid="uid://bg2efm3e4komr"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_ve0ex"]
 [ext_resource type="Texture2D" uid="uid://cayxd8u3khkr3" path="res://icon.svg" id="1_wnepn"]
+[ext_resource type="Script" path="res://StateMachine.gd" id="3_pbb5x"]
+[ext_resource type="Script" path="res://Idle.gd" id="4_aohty"]
+[ext_resource type="Script" path="res://Run.gd" id="5_frol4"]
+[ext_resource type="Script" path="res://Air.gd" id="6_fwroq"]
+[ext_resource type="Script" path="res://Dash.gd" id="7_0p21n"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vepsv"]
 radius = 16.1616
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.99, 0.99)
-slide_on_ceiling = false
-floor_stop_on_slope = false
 floor_constant_speed = true
-floor_max_angle = 1.22173
+floor_max_angle = 1.55509
 floor_snap_length = 4.0
 script = ExtResource("1_ve0ex")
 
@@ -23,3 +26,19 @@ texture = ExtResource("1_wnepn")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(0.99, 0.99)
 shape = SubResource("CircleShape2D_vepsv")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3_pbb5x")
+initial_state = NodePath("Air")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("4_aohty")
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("5_frol4")
+
+[node name="Air" type="Node" parent="StateMachine"]
+script = ExtResource("6_fwroq")
+
+[node name="Dash" type="Node" parent="StateMachine"]
+script = ExtResource("7_0p21n")
