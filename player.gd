@@ -22,6 +22,7 @@ const DASH_VELOCITY = 64.0*9.0
 const DASH_TIME = .125
 const DASH_BUNNYHOP_WINDOW = .75
 const DASH_EXIT_Y_VELOCITY_DAMPING = 2.5
+const DASH_BUNNYHOP_MAX_Y_VELOCITY = 256
 
 # Set constants for sprite animation
 const ROTATION_SPEED = 16

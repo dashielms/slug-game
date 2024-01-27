@@ -35,7 +35,7 @@ func physics_update(delta: float) -> void:
 			player.position.x + bunny_hop_direction.x, 
 			player.position.y + bunny_hop_direction.y, 
 		))
-		player.velocity.y = max(player.velocity.y, -256)
+		player.velocity.y = max(player.velocity.y, -player.DASH_BUNNYHOP_MAX_Y_VELOCITY)
 	else:
 		player.velocity = player.DASH_VELOCITY * player.position.direction_to(Vector2(
 			player.position.x + dash_input_direction.x, 
@@ -48,21 +48,20 @@ func physics_update(delta: float) -> void:
 		# the bunny hop. Note there are two options for how to calculate the bounce
 		# trajectory, one that is consistent and one that depends on the incoming 
 		# dash angle.
-		# TODO: The player.is_on_floor() check allows for bunny hopping into
-		# adjacent walls, this should be altered to skipping the bunny hop and
-		# going directly into dash in such a situation
 		if (abs(dash_input_direction.x) > 0
 				and player.is_on_floor() 
+				and not player.is_on_wall()
 				and dash_timer < player.DASH_BUNNYHOP_WINDOW):
-			var collision_info = player.move_and_collide(player.velocity * delta, false)
+			var collision_info = player.move_and_collide(player.velocity * delta, true)
 			if collision_info:
 				# Bounce the player such that the trajectory is always 60 degrees off the surface normal (30 degrees off the surface slide angle)
 				# This can be used as a more stable and predictable feeling alternative to the bounce logic below
 				var collision_bounce = Vector2(dash_input_direction.x, 0).bounce(collision_info.get_normal())
 				var collision_bounce_angle_adjusted = collision_info.get_normal().angle() + (sign(dash_input_direction.x)*(PI/3))
-
-				## Bounce the player such that the trajectory is halfway between the angle the
-				## player would take if sliding along the surface, and the angle the player would 
+				print("bounce_normal: ", rad_to_deg(collision_info.get_normal().angle()))
+				
+				## Alternate bounce calculation: Bounce the player such that the trajectory is halfway 
+				## between the angle the player would take if sliding along the surface, and the angle the player would 
 				## bounce off the surface with perfect reflection of the incoming dash angle around the surface normal.
 				## In plain english, allows the player to control the bounce angle precisely by altering
 				## the dash input direction. This is in contrast to the alternative logic above that always
@@ -81,14 +80,8 @@ func physics_update(delta: float) -> void:
 				# convert collision_bounce_angle_adjusted back to a Vector2 using Vector2.RIGHT.rotated()
 				bunny_hop_direction = Vector2.RIGHT.rotated(collision_bounce_angle_adjusted)
 				bunny_hop_direction.y = max(-0.25, bunny_hop_direction.y)
-				print("bunny_hop_direction:", bunny_hop_direction)
-				# update the player velocity to the new bunny hop direction 
-				#player.velocity = player.DASH_VELOCITY * player.position.direction_to(Vector2(
-					#player.position.x + bunny_hop_direction.x, 
-					#player.position.y + bunny_hop_direction.y, 
-				#))
-				#print(player.velocity.y)
-				#player.velocity.y = max(player.velocity.y, -256)
+				print("bunny_hop_direction:", bunny_hop_direction.angle())
+
 
 	player.move_and_slide()
 	
