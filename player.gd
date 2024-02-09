@@ -27,6 +27,9 @@ const DASH_BUNNYHOP_MAX_Y_VELOCITY = 256
 # Set constants for sprite animation
 const ROTATION_SPEED = 16
 
+# Set constants for particle effects
+@onready var effects = $Effects
+@onready var run_particle = $Effects/RunParticles
 
 # Get global variables from settings, inspector, inputs, etc
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -55,6 +58,9 @@ var dash_depleted = false
 # the floor_absolute according to an unchanging reference frame where the up direction
 # remains the default
 var prev_step_was_on_floor_relative = false 
+
+#func _ready():
+	#run_particle.amount = 1
 
 
 func _physics_process(delta):

@@ -1,6 +1,9 @@
 # Dash.gd
 extends PlayerState
 
+@onready var dash_particles_narrow = $"../../Effects/DashParticlesNarrow"
+@onready var dash_particles_wide = $"../../Effects/DashParticlesWide"
+
 var dash_input_direction = Vector2.RIGHT
 var dash_timer = 0
 var bunny_hop = false
@@ -9,12 +12,24 @@ var bunny_hop_direction = Vector2.UP
 
 func enter(msg := {}) -> void:
 	print("ENTERING DASH")
+
+
+	#dash_particles.lifetime = player.DASH_TIME
+	#dash_particles.speed_scale = 1
 	dash_timer = 0
 	bunny_hop = false
 	dash_input_direction = Vector2(
 		Input.get_axis("dash_left", "dash_right"), 
 		Input.get_axis("dash_up", "dash_down")
 	)
+	
+	dash_particles_narrow.emitting = true
+	dash_particles_narrow.gravity = -dash_input_direction*25
+	dash_particles_narrow.direction = -dash_input_direction
+	
+	dash_particles_wide.emitting = true
+	dash_particles_wide.gravity = -dash_input_direction*25
+	dash_particles_wide.direction = -dash_input_direction
 	
 	player.dash_depleted = true
 	# Set floor behavior to allow free sliding along it (avoids sudden stops and
@@ -107,3 +122,5 @@ func exit() -> void:
 	player.floor_stop_on_slope = player.default_floor_stop_on_slope
 	player.floor_constant_speed = player.default_floor_constant_speed
 	player.floor_snap_length = player.default_floor_snap_length
+	dash_particles_narrow.emitting = false
+	dash_particles_wide.emitting = false

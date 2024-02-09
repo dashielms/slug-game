@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bg2efm3e4komr"]
+[gd_scene load_steps=15 format=3 uid="uid://bg2efm3e4komr"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_ve0ex"]
 [ext_resource type="Texture2D" uid="uid://cayxd8u3khkr3" path="res://icon.svg" id="1_wnepn"]
@@ -10,6 +10,24 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vepsv"]
 radius = 16.1616
+
+[sub_resource type="Gradient" id="Gradient_ooabe"]
+colors = PackedColorArray(1, 1, 1, 0.796078, 1, 1, 1, 0)
+
+[sub_resource type="Gradient" id="Gradient_2uod3"]
+colors = PackedColorArray(1, 1, 1, 0.886275, 0.588235, 0.588235, 0.588235, 0.933333)
+
+[sub_resource type="Gradient" id="Gradient_8axqq"]
+colors = PackedColorArray(0.788235, 0.533333, 0.713726, 0.839216, 0.862745, 0.803922, 0.854902, 1)
+
+[sub_resource type="Gradient" id="Gradient_scgpc"]
+colors = PackedColorArray(0.971887, 0.96618, 0.93453, 1, 0.873726, 0.745623, 0.86184, 1)
+
+[sub_resource type="Gradient" id="Gradient_53ks5"]
+colors = PackedColorArray(0.712492, 0.571756, 0.714797, 1, 0.898039, 0.898039, 0.898039, 0.87451)
+
+[sub_resource type="Gradient" id="Gradient_trt73"]
+colors = PackedColorArray(0.838992, 0.78559, 0.696324, 0.592157, 0.660761, 0.62836, 0.932637, 0.737255)
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.99, 0.99)
@@ -24,6 +42,7 @@ scale = Vector2(0.252525, 0.252525)
 texture = ExtResource("1_wnepn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 scale = Vector2(0.99, 0.99)
 shape = SubResource("CircleShape2D_vepsv")
 
@@ -42,3 +61,105 @@ script = ExtResource("6_fwroq")
 
 [node name="Dash" type="Node" parent="StateMachine"]
 script = ExtResource("7_0p21n")
+
+[node name="Effects" type="Node2D" parent="."]
+z_index = 1
+
+[node name="RunParticles" type="CPUParticles2D" parent="Effects"]
+amount = 20
+lifetime = 1.5
+speed_scale = 2.0
+lifetime_randomness = 0.97
+emission_shape = 4
+emission_points = PackedVector2Array(-8, 16, 0, 16, 8, 16)
+emission_colors = PackedColorArray()
+direction = Vector2(0, -1)
+gravity = Vector2(0, 0)
+initial_velocity_min = 25.0
+initial_velocity_max = 50.0
+damping_min = 80.0
+damping_max = 90.0
+angle_min = -15.0
+angle_max = 15.0
+scale_amount_min = 4.0
+scale_amount_max = 8.0
+color_ramp = SubResource("Gradient_ooabe")
+color_initial_ramp = SubResource("Gradient_2uod3")
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[node name="JumpEffects" type="Node" parent="Effects"]
+
+[node name="JumpParticles" type="CPUParticles2D" parent="Effects/JumpEffects"]
+scale = Vector2(0.99, 0.99)
+emitting = false
+amount = 20
+lifetime = 4.0
+one_shot = true
+explosiveness = 0.99
+lifetime_randomness = 0.97
+emission_shape = 4
+emission_points = PackedVector2Array(-8, 16, 0, 16, 8, 16)
+emission_colors = PackedColorArray()
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 100)
+initial_velocity_min = 72.62
+initial_velocity_max = 137.25
+damping_min = 35.578
+damping_max = 35.578
+angle_min = -15.0
+angle_max = 15.0
+scale_amount_min = 2.0
+scale_amount_max = 10.0
+color_ramp = SubResource("Gradient_ooabe")
+color_initial_ramp = SubResource("Gradient_2uod3")
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[node name="DashParticlesNarrow" type="CPUParticles2D" parent="Effects"]
+emitting = false
+amount = 100
+lifetime = 0.25
+one_shot = true
+randomness = 0.77
+lifetime_randomness = 0.97
+emission_shape = 1
+emission_sphere_radius = 8.0
+spread = 5.0
+gravity = Vector2(25, 0)
+initial_velocity_min = 250.0
+initial_velocity_max = 1000.0
+angle_min = 30.0
+angle_max = 60.0
+scale_amount_min = 0.0
+scale_amount_max = 6.0
+color = Color(0.839216, 0.811765, 0.584314, 1)
+color_ramp = SubResource("Gradient_8axqq")
+color_initial_ramp = SubResource("Gradient_scgpc")
+hue_variation_min = -1.0
+hue_variation_max = 1.0
+
+[node name="DashParticlesWide" type="CPUParticles2D" parent="Effects"]
+emitting = false
+amount = 150
+lifetime = 0.25
+one_shot = true
+randomness = 0.77
+lifetime_randomness = 0.97
+emission_shape = 1
+emission_sphere_radius = 16.0
+spread = 30.0
+gravity = Vector2(25, 0)
+initial_velocity_max = 500.0
+damping_min = 54.422
+damping_max = 96.018
+angle_min = 30.0
+angle_max = 60.0
+scale_amount_min = 2.0
+scale_amount_max = 8.0
+color = Color(0.784314, 0.784314, 0.784314, 0.92549)
+color_ramp = SubResource("Gradient_53ks5")
+color_initial_ramp = SubResource("Gradient_trt73")
+hue_variation_min = -1.0
+hue_variation_max = 1.0

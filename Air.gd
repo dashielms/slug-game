@@ -1,6 +1,9 @@
 # Air.gd
 extends PlayerState
 
+@onready var jump_effects = $"../../Effects/JumpEffects"
+@onready var jump_particles = $"../../Effects/JumpEffects/JumpParticles"
+
 # By default, move_and_slide() will set player velocity.y to 0 on ceiling
 # collision. This variable will hold and track what the velocity.y should
 # be, allowing the player to continue the jump upon moving out from under
@@ -14,12 +17,32 @@ func enter(msg := {}) -> void:
 	print("ENTERING AIR")
 	if msg.has("do_jump"):
 		player.velocity.y = -player.JUMP_VELOCITY
+		
+		# Duplicate the JumpParticles object as a new child of JumpEffects
+		# This is required to allow for multiple JumpParticles to play on screen at the same time, as
+		# often the player will begin a new jump before the particle effects from the prior jump
+		# have completed their one-time emit cycle
+		var new_jp = jump_particles.duplicate()
+		new_jp.emitting = true
+		new_jp.position = player.position
+		if player.get_floor_normal():
+			new_jp.direction = player.get_floor_normal()
+		new_jp.direction.x += 0 if is_equal_approx(player.velocity.x, 0.0) else 0.2*-sign(player.move_input_direction.x) #tilt the particle burst away from the direction of movement
+		jump_effects.add_child(new_jp)
+
 	if player.velocity.y <=0:
 		held_ceiling_jump_velocity = player.velocity.y
 
 
 func physics_update(delta: float) -> void:
-
+	for particle in jump_effects.get_children():
+		if not particle.emitting:
+			#particle.position = player.position
+		#else:
+			jump_effects.remove_child(particle)
+		
+		print(particle, ", ", particle.emitting)
+	print("end update")
 	# Horizontal movement
 	player.velocity.x = move_toward(
 		player.velocity.x, 
